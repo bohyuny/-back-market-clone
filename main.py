@@ -1,4 +1,4 @@
-from fastapi import FastAPI,UploadFile,Form
+from fastapi import FastAPI,UploadFile,Form,Response
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
@@ -48,6 +48,19 @@ async def get_items():
     
     
     return JSONResponse(jsonable_encoder(dict(row) for row in rows))
+
+
+@app.get('/images/{item_id}')
+async def get_image(item_id):
+    cur = con.cursor()
+    #16진법으로 가져와짐
+    image_bytes =cur.execute(f"""
+                             SELECT image From items WHERE id={item_id}
+                             """).fetchone()[0]
+    #변환
+    return Response(content=bytes.fromhex(image_bytes))
+                            
+                            
 
     
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")

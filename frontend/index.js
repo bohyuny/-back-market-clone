@@ -8,14 +8,14 @@ const calcTime = (timestamp) => {
 
   if (hour > 0) return `${hour}시간 전`;
   else if (minute > 0) return `${minute}분 전`;
-  else if (second >= 0) return `${second}초 전`;
+  else if (second > 0) return `${second}초 전`;
   else "방금 전";
 };
 
 const renderData = (data) => {
   const main = document.querySelector("main");
 
-  data.reverse().forEach((obj) => {
+  data.sort((a,b)=>a.).forEach(async (obj) => {
     const div = document.createElement("div");
     div.className = "item-list";
 
@@ -23,7 +23,10 @@ const renderData = (data) => {
     imageDiv.className = "item-list__img";
 
     const img = document.createElement("img");
-    img.src = obj.image;
+    const res = await fetch(`/images/${obj.id}`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    img.src = url;
 
     const InfoDiv = document.createElement("div");
     InfoDiv.className = "item-list__info";
